@@ -68,13 +68,13 @@ app.patch('/api/v1/songs/:id', (request, response) => {
 app.delete('/api/v1/songs/:id', (request, response) => {
 
   database('songs')
-  .where({id: request.params.id})
-  .then(song => {
-    if (song.length) {
-      database('songs')
-        .where({ id: song[0].id })
-        .del().then(song => {
-          response.status(200).json({success: 'Song succesfully deleted'});
+    .where({id: request.params.id})
+    .then(song => {
+      if (song.length) {
+        database('songs')
+          .where({ id: song[0].id })
+            .del().then(song => {
+              response.status(200).json({success: 'Song succesfully deleted'});
         })
     } else {
       response.status(404).json({
