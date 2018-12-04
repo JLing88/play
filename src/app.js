@@ -15,16 +15,15 @@ app.get('/', (request, response) => {
   response.send('Place holder');
 });
 
-app.get('/api/v1/songs', (request, response) => {
-  database('songs').select()
-    .then((papers) => {
-      response.status(200).json(papers);
+app.get('/api/v1/favorites', (request, response) => {
+  database('songs').select(["name", "artist_name", "genre", "song_rating"])
+    .then((favorite) => {
+      response.status(200).json({ name: favorite[0], artist_name: favorite[1], genre: favorite[2], song_rating: favorite[3] });
     })
     .catch((error) => {
       response.status(500).json({ error });
     });
 });
-
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
