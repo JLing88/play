@@ -12,4 +12,7 @@ var SongSchema = new Schema({
                 min: 0,
                 max: 100,
                 required: true}
-})
+});
+
+var Song = mongoose.model("Song", "SongSchema");
+module.exports = Song;

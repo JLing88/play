@@ -8,7 +8,7 @@ app.use(morgan('combined'))
 app.use(bodyParser.json())
 app.use(cors())
 
-app.get('/posts', (req, res) => {
+app.get('/songs', (req, res) => {
   res.send(
     [{
       title: "Hello World!",
@@ -20,7 +20,7 @@ app.get('/posts', (req, res) => {
 app.listen(process.env.PORT || 8081)
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/posts');
+mongoose.connect('mongodb://localhost:27017/songs');
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error"));
 db.once("open", function(callback){
