@@ -28,3 +28,23 @@ app.get('/api/v1/favorites', (request, response) => {
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
+
+app.post('/api/v1/songs', (request, response) => {
+  const song = request.body;
+
+  for (let requiredParameter of ['name', 'artist_name', 'genre', 'song_rating']) {
+    if (!song[requiredParameter]) {
+      return response
+        .status(422)
+        .send({ error: `Expected format: { name: <String>, artist_name: <String>, genre: <String>, song_rating: <String> }. You're missing a "${requiredParameter}" property.` });
+    }
+  }
+
+  database('songs').insert(song, ['id', 'name', 'artist_name', 'genre', 'song_rating'])
+  .then(paper => {
+    response.status(201).json({ songs: paper[0] })
+  })
+  .catch(error => {
+    response.status(500).json({ error });
+  });
+});
