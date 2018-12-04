@@ -32,31 +32,6 @@ app.get('/songs', (req, res) => {
   }).sort({_id:-1})
 })
 
-// Add new song
-// app.post('/songs', (req, res) => {
-//   var db = req.db;
-//   var name = req.body.name;
-//   var artist_name = req.body.description;
-//   var genre = req.body.genre;
-//   var song_rating = req.body.song_rating;
-//   var new_song = new Song({
-//     name: name,
-//     artist_name: artist_name,
-//     genre: genre,
-//     song_rating: song_rating
-//   });
-//
-//   new_song.save(function (error) {
-//     if (error) {
-//       console.log(error)
-//     }
-//     res.send({
-//       success: true,
-//       message: 'Song saved succesfully!'
-//     })
-//   })
-// })
-
 app.post('/songs', (req, res) => {
   console.log(req.body)
   var db = req.db;
