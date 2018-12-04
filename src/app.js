@@ -51,6 +51,9 @@ app.post('/api/v1/songs', (request, response) => {
 
 app.patch('/api/v1/songs/:id', (request, response) => {
   const song = request.body;
+
+  pry = require('pryjs')
+  eval(pry.it)
   
   database('songs')
   .where({ id: request.params.id})
