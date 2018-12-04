@@ -41,8 +41,22 @@ app.post('/api/v1/songs', (request, response) => {
   }
 
   database('songs').insert(song, ['id', 'name', 'artist_name', 'genre', 'song_rating'])
-  .then(paper => {
-    response.status(201).json({ songs: paper[0] })
+  .then(song => {
+    response.status(201).json({ songs: song[0] })
+  })
+  .catch(error => {
+    response.status(500).json({ error });
+  });
+});
+
+app.patch('/api/v1/songs/:id', (request, response) => {
+  const song = request.body;
+  
+  database('songs')
+  .where({ id: request.params.id})
+  .update(song, ['id', 'name', 'artist_name', 'genre', 'song_rating'])
+  .then(song => {
+    response.status(200).json({ songs: song[0] })
   })
   .catch(error => {
     response.status(500).json({ error });
