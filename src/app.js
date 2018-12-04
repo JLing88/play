@@ -6,6 +6,8 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
 const database = require('knex')(configuration);
 
+pry = require('pryjs')
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('port', process.env.PORT || 3000);
@@ -64,16 +66,16 @@ app.patch('/api/v1/songs/:id', (request, response) => {
 });
 
 app.delete('/api/v1/songs/:id', (request, response) => {
-  pry = require('pryjs')
-  eval(pry.it)
 
   database('songs')
-  .where('id', request.params.id)
+  .where({id: request.params.id})
   .then(song => {
     if (song.length) {
-      database('songs').where({ id: song[0].id }).del()
-
-      response.status(200).json({success: 'Song succesfully deleted'});
+      database('songs')
+        .where({ id: song[0].id })
+        .del().then(song => {
+          response.status(200).json({success: 'Song succesfully deleted'});
+        })
     } else {
       response.status(404).json({
         error: `Could not find song with id ${request.params.id}`
