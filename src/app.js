@@ -9,7 +9,7 @@ const database = require('knex')(configuration);
 
 pry = require('pryjs')
 
-app.use(cors());
+app.use(cors()); // Enables CORS for our Frontend
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('port', process.env.PORT || 3000);
@@ -21,8 +21,8 @@ app.get('/', (request, response) => {
 
 app.get('/api/v1/favorites', (request, response) => {
   database('songs').select(["name", "artist_name", "genre", "song_rating"])
-    .then((favorite) => {
-      response.status(200).json({ name: favorite[0], artist_name: favorite[1], genre: favorite[2], song_rating: favorite[3] });
+    .then((favorites) => {
+      response.status(200).json(favorites);
     })
     .catch((error) => {
       response.status(500).json({ error });
@@ -88,3 +88,5 @@ app.delete('/api/v1/songs/:id', (request, response) => {
     response.status(500).json({ error });
   });
 });
+
+module.exports = app
