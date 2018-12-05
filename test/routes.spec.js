@@ -46,16 +46,35 @@ describe('API Routes', () => {
       .get('/api/v1/favorites')
       .end((err, res) => {
         res.should.have.status(200);
-        res.body.should.be.a('object');
+        res.body.should.be.a('array');
+        res.body[0].should.have.property('id');
+        res.body[0].should.have.property('name');
+        res.body[0].should.have.property('artist_name');
+        res.body[0].should.have.property('genre');
+        res.body[0].should.have.property('song_rating');
         done();
       });
   });
 
-  //
-  // after((done) => {
-  //
-  // });
-
-
+  it('should create a new paper', done => {
+    chai.request(app)
+      .post('/api/v1/songs')
+      .send({
+        name: 'Cannot Stop Believing',
+        artist_name: 'Journey',
+        genre: 'Trash',
+        song_rating: 50
+      })
+      .end((err, res) => {
+        res.should.have.status(201);
+        res.body.should.be.a('object');
+        res.body.should.have.property('songs');
+        res.body['songs'].should.have.property('id');
+        res.body['songs'].should.have.property('name');
+        res.body['songs'].should.have.property('artist_name');
+        res.body['songs'].should.have.property('genre');
+        res.body['songs'].should.have.property('song_rating');
+        done();
+      });
+  });
 });
-

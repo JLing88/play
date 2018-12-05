@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors')
 const app = express();
 const bodyParser = require('body-parser');
 
@@ -8,6 +9,7 @@ const database = require('knex')(configuration);
 
 pry = require('pryjs')
 
+app.use(cors()); // Enables CORS for our Frontend
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('port', process.env.PORT || 3000);
@@ -18,9 +20,9 @@ app.get('/', (request, response) => {
 });
 
 app.get('/api/v1/favorites', (request, response) => {
-  database('songs').select(["name", "artist_name", "genre", "song_rating"])
-    .then((favorite) => {
-      response.status(200).json({ name: favorite[0], artist_name: favorite[1], genre: favorite[2], song_rating: favorite[3] });
+  database('songs').select(['id', "name", "artist_name", "genre", "song_rating"])
+    .then((favorites) => {
+      response.status(200).json(favorites);
     })
     .catch((error) => {
       response.status(500).json({ error });
