@@ -66,17 +66,20 @@ describe('API Routes', () => {
         song_rating: 50
       })
       .end((err, res) => {
-        response.should.have.status(201);
-        response.body.should.be.a('object');
-        response.body.should.have.property('id');
+        res.should.have.status(201);
+        res.body.should.be.a('object');
+        res.body.should.have.property('songs');
+        res.body['songs'].should.have.property('id');
+        res.body['songs'].should.have.property('name');
+        res.body['songs'].should.have.property('artist_name');
+        res.body['songs'].should.have.property('genre');
+        res.body['songs'].should.have.property('song_rating');
         done();
       })
   })
 
-  //
   // after((done) => {
   //
   // });
-
 
 });
