@@ -20,7 +20,7 @@ app.get('/', (request, response) => {
 });
 
 app.get('/api/v1/favorites', (request, response) => {
-  database('songs').select(["name", "artist_name", "genre", "song_rating"])
+  database('songs').select(['id', "name", "artist_name", "genre", "song_rating"])
     .then((favorites) => {
       response.status(200).json(favorites);
     })

@@ -46,7 +46,12 @@ describe('API Routes', () => {
       .get('/api/v1/favorites')
       .end((err, res) => {
         res.should.have.status(200);
-        res.body.should.be.a('object');
+        res.body.should.be.a('array');
+        res.body[0].should.have.property('id');
+        res.body[0].should.have.property('name');
+        res.body[0].should.have.property('artist_name');
+        res.body[0].should.have.property('genre');
+        res.body[0].should.have.property('song_rating');
         done();
       });
   });
