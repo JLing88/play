@@ -14,6 +14,18 @@ module.exports = {
     useNullAsDefault: true
   },
 
+  test: {
+    client: 'pg',
+    connection: 'postgres://localhost/play_test',
+    migrations: {
+      directory: './migrations'
+    },
+    seeds: {
+      directory: './seeds'
+    },
+    useNullAsDefault: true
+  },
+
   staging: {
     client: 'postgresql',
     connection: {

@@ -5,7 +5,7 @@ const app = require('../src/app');
 
 pry = require('pryjs')
 
-const environment = process.env.NODE_ENV || 'development';
+const environment = 'test';
 const configuration = require('../knexfile')[environment];
 const database = require('knex')(configuration);
 
