@@ -75,11 +75,6 @@ describe('API Routes', () => {
         res.body['songs'].should.have.property('genre');
         res.body['songs'].should.have.property('song_rating');
         done();
-      })
-  })
-
-  // after((done) => {
-  //
-  // });
-
+      });
+  });
 });

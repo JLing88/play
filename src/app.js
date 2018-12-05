@@ -89,4 +89,4 @@ app.delete('/api/v1/songs/:id', (request, response) => {
   });
 });
 
-module.exports = app
+module.exports = app;

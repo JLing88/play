@@ -3,8 +3,10 @@ exports.up = function(knex, Promise) {
   return Promise.all([
     knex.schema.createTable('playlist_songs', function(table) {
       table.increments('id').primary();
-      table.integer('playlist_id').references('playlists.id')
-      table.integer('song_id').references('songs.id')
+      table.integer('playlist_id').unsigned();
+      table.integer('song_id').unsigned();
+      table.foreign('playlist_id').references('playlists.id')
+      table.foreign('song_id').references('songs.id')
     })
   ])
 };
