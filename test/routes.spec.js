@@ -84,7 +84,7 @@ describe('API Routes', () => {
       .then(songs => {
         song_id = songs[songs.length -1]['id'];
       })
-      .then(ffs => {
+      .then(() => {
         chai.request(app)
           .delete(`/api/v1/songs/${song_id}`)
           .end((err, res) => {
