@@ -56,7 +56,7 @@ describe('API Routes', () => {
       });
   });
 
-  it('should create a new paper', done => {
+  it('can create a new song', done => {
     chai.request(app)
       .post('/api/v1/songs')
       .send({
@@ -75,6 +75,24 @@ describe('API Routes', () => {
         res.body['songs'].should.have.property('genre');
         res.body['songs'].should.have.property('song_rating');
         done();
+      });
+  });
+
+  it('can delete a song', done => {
+    var song_id
+    database('songs').select(['id'])
+      .then(songs => {
+        song_id = songs[songs.length -1]['id'];
+      })
+      .then(() => {
+        chai.request(app)
+          .delete(`/api/v1/songs/${song_id}`)
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('success');
+            done();
+          });
       });
   });
 });
