@@ -86,3 +86,5 @@ app.delete('/api/v1/songs/:id', (request, response) => {
     response.status(500).json({ error });
   });
 });
+
+module.exports = app;
