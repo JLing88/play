@@ -101,10 +101,10 @@ app.get('/api/v1/playlists', (req, res) => {
     GROUP BY playlists.id
     ORDER BY playlists.id ASC
     `).then(playlists => {
-      response.status(200).json(playlists);
+      res.status(200).json(playlists);
     })
     .catch(error => {
-      response.status(500).json({ error });
+      res.status(500).json({ error });
     });
 });
 
