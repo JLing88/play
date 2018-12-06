@@ -15,6 +15,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set('port', process.env.PORT || 3000);
 app.locals.title = 'Play';
 
+app.listen(app.get('port'), () => {
+  console.log(`${app.locals.title} is running on ${app.get('port')}.`);
+});
+
 app.get('/', (request, response) => {
   response.send('Place holder');
 });
@@ -27,10 +31,6 @@ app.get('/api/v1/favorites', (request, response) => {
     .catch((error) => {
       response.status(500).json({ error });
     });
-});
-
-app.listen(app.get('port'), () => {
-  console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
 
 app.post('/api/v1/songs', (request, response) => {
@@ -87,6 +87,13 @@ app.delete('/api/v1/songs/:id', (request, response) => {
   .catch(error => {
     response.status(500).json({ error });
   });
+});
+
+app.get('/api/v1/playlists', (request, response) => {
+  database.raw('SELECT * FROM playlists JOIN playlist_songs ON playlists.id = playlist_songs.playlist_id JOIN songs ON playlist_songs.song_id = songs.id')
+    .then(playlists => {
+      eval(pry.it)
+    })
 });
 
 module.exports = app;
