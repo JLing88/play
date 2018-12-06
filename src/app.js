@@ -102,7 +102,10 @@ app.get('/api/v1/playlists', (request, response) => {
   `)
   .then(songs => {
     response.status(200).json(songs.rows)
-  });
+  })
+  .catch(error => {
+    response.status(500).json({ error });
+  })
 });
 
 module.exports = app;
