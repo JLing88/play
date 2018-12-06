@@ -95,4 +95,17 @@ describe('API Routes', () => {
           });
       });
   });
+
+  // it('can return all playlists and their associated songs', done => {
+  //   chai.request(app)
+  //     .get('api/v1/playlists')
+  //     .end(err, res) => {
+  //       res.should.have.status(200);
+  //       res.body.should.be.a('array');
+  //       res.body[0].should.have.property('id');
+  //       res.body[0].should.have.property('name');
+  //       res.body[0].should.have.property('songs');
+  //       eval(pry.it)
+  //     }
+  // });
 });
