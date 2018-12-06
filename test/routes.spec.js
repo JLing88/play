@@ -36,23 +36,23 @@ describe('Client Routes', () => {
 });
 
 describe('API Routes', () => {
-  before((done) => {
-    database.migrate.latest()
-      .then( () => done())
-      .catch(error => {
-        throw error;
-        done();
-      });
-  });
-
-  beforeEach((done) => {
-    database.seed.run()
-      .then( () => done())
-      .catch(error => {
-        throw error;
-        done();
-      });
-  });
+  // before((done) => {
+  //   database.migrate.latest()
+  //     .then( () => done())
+  //     .catch(error => {
+  //       throw error;
+  //       done();
+  //     });
+  // });
+  //
+  // beforeEach((done) => {
+  //   database.seed.run()
+  //     .then( () => done())
+  //     .catch(error => {
+  //       throw error;
+  //       done();
+  //     });
+  // });
 
   it('can return all favorites', done => {
     chai.request(app)
