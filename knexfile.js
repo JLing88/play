@@ -1,10 +1,21 @@
-// Update with your config settings.
 
 module.exports = {
 
   development: {
     client: 'pg',
     connection: 'postgres://localhost/play_development',
+    migrations: {
+      directory: './migrations'
+    },
+    seeds: {
+      directory: './seeds'
+    },
+    useNullAsDefault: true
+  },
+
+  test: {
+    client: 'pg',
+    connection: 'postgres://localhost/play_test',
     migrations: {
       directory: './migrations'
     },

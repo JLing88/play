@@ -90,9 +90,20 @@ app.delete('/api/v1/songs/:id', (request, response) => {
 });
 
 app.get('/api/v1/playlists', (request, response) => {
-  database.raw('SELECT * FROM playlists JOIN playlist_songs ON playlists.id = playlist_songs.playlist_id JOIN songs ON playlist_songs.song_id = songs.id')
-    .then(playlists => {
-    })
+  database.raw
+  (`
+    SELECT playlists.id, playlists.name, array_to_json
+      (array_agg(json_build_object('id', songs.id, 'name', songs.name, 'genre', songs.genre, 'rating', songs.song_rating)))
+    AS songs
+    FROM songs
+    JOIN playlist_songs ON songs.id = playlist_songs.song_id
+    JOIN playlists ON playlist_songs.song_id = songs.id
+    GROUP BY playlists.id
+  `)
+  .then(songs => {
+    response.status(200).json({songs})
+  });
 });
 
 module.exports = app;
+
