@@ -89,4 +89,23 @@ app.delete('/api/v1/songs/:id', (request, response) => {
   });
 });
 
+app.get('/api/v1/playlists', (req, res) => {
+
+  database.raw(`
+    SELECT playlists.id, playlists.name, array_to_json
+    (array_agg(json_build_object('id', songs.id, 'name', songs.name, 'artist_name', songs.artist_name, 'genre', songs.genre, 'song_rating', songs.song_rating)))
+    AS songs
+    FROM playlists
+    JOIN playlist_songs ON playlists.id = playlist_songs.playlist_id
+    JOIN songs ON playlist_songs.song_id = songs.id
+    GROUP BY playlists.id
+    ORDER BY playlists.id ASC
+    `).then(playlists => {
+      response.status(200).json(playlists);
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
+
 module.exports = app;
