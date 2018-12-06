@@ -10,19 +10,6 @@ const configuration = require('../knexfile')[environment];
 const database = require('knex')(configuration);
 
 chai.use(chaiHttp);
-// DELETES ALL TABLES
-// database.raw(`DROP TABLE playlist_songs;
-//               DROP TABLE playlists;
-//               DROP TABLE songs;
-//               DROP TABLE knex_migrations;
-//               DROP TABLE knex_migrations_lock;
-//    `).then(() => {
-//    })
-// Cleans Database
-// var knexCleaner = require('knex-cleaner');
-// knexCleaner.clean(database).then(function() {
-//
-// });
 
 describe('Client Routes', () => {
   it("has a root route", done => {
@@ -36,12 +23,21 @@ describe('Client Routes', () => {
 });
 
 describe('API Routes', () => {
-  function cleanUp () {
-    return database.schema.dropTableIfExists('users')
-  }
+  function buildTestDb () {
+    database.migrate.latest();
+    database.seed.run();
+  };
 
-  before(cleanUp)
-  after(cleanUp)
+  function tearDown() {
+    database.migrate.rollback();
+    database.schema.dropTableIfExists('playlist_songs');
+    database.schema.dropTableIfExists('songs');
+    database.schema.dropTableIfExists('playlists');
+
+  };
+
+  before(buildTestDb)
+  after(tearDown)
 
   // before((done) => {
   //   database.migrate.latest()
@@ -129,16 +125,15 @@ describe('API Routes', () => {
       });
   });
 
-  // it('can return all playlists and their associated songs', done => {
-  //   chai.request(app)
-  //     .get('api/v1/playlists')
-  //     .end(err, res) => {
-  //       res.should.have.status(200);
-  //       res.body.should.be.a('array');
-  //       res.body[0].should.have.property('id');
-  //       res.body[0].should.have.property('name');
-  //       res.body[0].should.have.property('songs');
-  //       eval(pry.it)
-  //     }
-  // });
+  it('can return all playlists and their associated songs', done => {
+    chai.request(app)
+      .get('api/v1/playlists')
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.be.a('array');
+        res.body[0].should.have.property('id');
+        res.body[0].should.have.property('name');
+        res.body[0].should.have.property('songs');
+      });
+  });
 });
