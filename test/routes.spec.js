@@ -93,6 +93,7 @@ describe('API Routes', () => {
 
   it('can delete a song', done => {
     var song_id
+    eval(pry.it);
     database('songs').select(['id'])
       .then(songs => {
         song_id = songs[songs.length -1]['id'];
