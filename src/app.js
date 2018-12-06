@@ -92,7 +92,6 @@ app.delete('/api/v1/songs/:id', (request, response) => {
 app.get('/api/v1/playlists', (request, response) => {
   database.raw('SELECT * FROM playlists JOIN playlist_songs ON playlists.id = playlist_songs.playlist_id JOIN songs ON playlist_songs.song_id = songs.id')
     .then(playlists => {
-      eval(pry.it)
     })
 });
 
