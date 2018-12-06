@@ -19,10 +19,10 @@ chai.use(chaiHttp);
 //    `).then(() => {
 //    })
 // Cleans Database
-var knexCleaner = require('knex-cleaner');
-knexCleaner.clean(database).then(function() {
-
-});
+// var knexCleaner = require('knex-cleaner');
+// knexCleaner.clean(database).then(function() {
+//
+// });
 
 describe('Client Routes', () => {
   it("has a root route", done => {
@@ -36,6 +36,13 @@ describe('Client Routes', () => {
 });
 
 describe('API Routes', () => {
+  function cleanUp () {
+    return database.schema.dropTableIfExists('users')
+  }
+
+  before(cleanUp)
+  after(cleanUp)
+
   // before((done) => {
   //   database.migrate.latest()
   //     .then( () => done())
@@ -46,12 +53,25 @@ describe('API Routes', () => {
   // });
   //
   // beforeEach((done) => {
-  //   database.seed.run()
-  //     .then( () => done())
-  //     .catch(error => {
-  //       throw error;
-  //       done();
+  //   database.migrate.latest()
+  //   .then(() => {
+  //     database.migrate.latest()
+  //   })
+  //     .then(() => {
+  //       return database.seed.run()
+  //     })
+  //       .then( () => done())
+  //         .catch(error => {
+  //           throw error;
+  //           done();
   //     });
+  // });
+  //
+  // afterEach((done) => {
+  //   database.migrate.rollback()
+  //   .then(() => {
+  //     done();
+  //   });
   // });
 
   it('can return all favorites', done => {
@@ -93,7 +113,6 @@ describe('API Routes', () => {
 
   it('can delete a song', done => {
     var song_id
-    eval(pry.it);
     database('songs').select(['id'])
       .then(songs => {
         song_id = songs[songs.length -1]['id'];
