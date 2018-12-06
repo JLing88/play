@@ -93,10 +93,11 @@ app.get('/api/v1/playlists', (request, response) => {
   database.raw
   (`
     SELECT playlists.id, playlists.name,
-    json_agg(json_build_object('id', songs.id, 'name', songs.name, 'artist_name', 'songs.artist_name', 'genre', songs.genre, 'rating', songs.song_rating)) AS songs
+    json_agg(json_build_object('id', songs.id, 'name', songs.name, 'artist_name', songs.artist_name, 'genre', songs.genre, 'rating', songs.song_rating)) AS songs
     FROM songs
-    JOIN playlist_songs ON songs.id = playlist_songs.song_id
-    JOIN playlists ON playlist_songs.song_id = songs.id
+    INNER JOIN playlist_songs ON songs.id = playlist_songs.song_id
+    INNER JOIN playlists ON playlist_songs.song_id = songs.id
+    WHERE playlists.id = playlist_songs.playlist_id
     GROUP BY playlists.id
   `)
   .then(songs => {
