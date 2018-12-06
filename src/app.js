@@ -99,6 +99,7 @@ app.get('/api/v1/playlists', (request, response) => {
     INNER JOIN playlists ON playlist_songs.song_id = songs.id
     WHERE playlists.id = playlist_songs.playlist_id
     GROUP BY playlists.id
+    ORDER BY playlists.id ASC
   `)
   .then(songs => {
     response.status(200).json(songs.rows)
