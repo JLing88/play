@@ -93,7 +93,12 @@ app.get('/api/v1/playlists', (request, response) => {
   database.raw
   (`
     SELECT playlists.id, playlists.name,
-    json_agg(json_build_object('id', songs.id, 'name', songs.name, 'artist_name', songs.artist_name, 'genre', songs.genre, 'rating', songs.song_rating)) AS songs
+    json_agg(json_build_object('id', songs.id,
+                               'name', songs.name,
+                               'artist_name', songs.artist_name,
+                               'genre', songs.genre,
+                               'rating', songs.song_rating))
+                               AS songs
     FROM songs
     INNER JOIN playlist_songs ON songs.id = playlist_songs.song_id
     INNER JOIN playlists ON playlist_songs.song_id = songs.id
@@ -106,6 +111,32 @@ app.get('/api/v1/playlists', (request, response) => {
   })
   .catch(error => {
     response.status(500).json({ error });
+  })
+});
+
+app.get('/api/v1/playlists/:id/songs', (request, response) => {
+  const playlist_id = request.params.id;
+  database.raw
+  (`
+  SELECT playlists.id, playlists.name,
+  json_agg(json_build_object('id', songs.id,
+                               'name', songs.name,
+                               'artist_name', songs.artist_name,
+                               'genre', songs.genre,
+                               'rating', songs.song_rating))
+                               AS songs
+  FROM songs
+  INNER JOIN playlist_songs ON songs.id = playlist_songs.song_id
+  INNER JOIN playlists ON playlist_songs.song_id = songs.id
+  WHERE playlists.id = ${playlist_id} 
+  AND playlists.id = playlist_songs.playlist_id
+  GROUP BY playlists.id
+  `)
+  .then(playlist_songs => {
+    response.status(200).json(playlist_songs.rows);
+  })
+  .catch(error => {
+    response.status(404).json({ error })
   })
 });
 
