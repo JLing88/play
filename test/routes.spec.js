@@ -24,8 +24,8 @@ describe('Client Routes', () => {
 
 describe('API Routes', () => {
   function buildTestDb () {
-    database.migrate.latest();
-    database.seed.run();
+    database.migrate.latest(configuration);
+    database.seed.run(configuration);
   };
 
   function tearDown() {

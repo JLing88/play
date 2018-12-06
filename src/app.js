@@ -3,7 +3,7 @@ const cors = require('cors')
 const app = express();
 const bodyParser = require('body-parser');
 
-const environment = process.env.NODE_ENV || 'test';
+const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
 const database = require('knex')(configuration);
 
@@ -128,7 +128,7 @@ app.get('/api/v1/playlists/:id/songs', (request, response) => {
   FROM songs
   INNER JOIN playlist_songs ON songs.id = playlist_songs.song_id
   INNER JOIN playlists ON playlist_songs.song_id = songs.id
-  WHERE playlists.id = ${playlist_id} 
+  WHERE playlists.id = ${playlist_id}
   AND playlists.id = playlist_songs.playlist_id
   GROUP BY playlists.id
   `)
@@ -141,4 +141,3 @@ app.get('/api/v1/playlists/:id/songs', (request, response) => {
 });
 
 module.exports = app;
-
