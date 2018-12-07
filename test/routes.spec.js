@@ -5,7 +5,7 @@ const app = require('../src/app');
 
 pry = require('pryjs')
 
-const environment = 'test';
+const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
 const database = require('knex')(configuration);
 
@@ -127,13 +127,14 @@ describe('API Routes', () => {
 
   it('can return all playlists and their associated songs', done => {
     chai.request(app)
-      .get('api/v1/playlists')
+      .get('/api/v1/playlists')
       .end((err, res) => {
         res.should.have.status(200);
         res.body.should.be.a('array');
         res.body[0].should.have.property('id');
         res.body[0].should.have.property('name');
         res.body[0].should.have.property('songs');
+        done();
       });
   });
 });
