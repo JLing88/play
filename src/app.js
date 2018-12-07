@@ -7,7 +7,7 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
 const database = require('knex')(configuration);
 
-pry = require('pryjs')
+const pry = require('pryjs')
 
 app.use(cors()); // Enables CORS for our Frontend
 app.use(bodyParser.json());
@@ -31,6 +31,17 @@ app.get('/api/v1/favorites', (request, response) => {
     .catch((error) => {
       response.status(500).json({ error });
     });
+});
+
+app.get('/api/v1/songs/:id', (request, response) => {
+  database('songs')
+    .where({ id: request.params.id})
+      .then(result => {
+        response.status(200).json(result);
+      })
+      .catch(error => {
+        response.status(404).json({ error });
+      });
 });
 
 app.post('/api/v1/songs', (request, response) => {
@@ -87,6 +98,33 @@ app.delete('/api/v1/songs/:id', (request, response) => {
   .catch(error => {
     response.status(500).json({ error });
   });
+});
+
+app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
+  database('songs')
+    .where({id: request.params.id})
+      .then(result => {
+        song = result[0];
+      })
+        .then(() => {
+          database('playlists')
+            .where({id: request.params.playlist_id})
+              .then(result => {
+                playlist = result[0];
+              })
+              .then(() => {
+                database.raw
+                  (`DELETE FROM playlist_songs
+                    WHERE playlist_songs.playlist_id = ${playlist.id} AND playlist_songs.song_id = ${song.id}
+                  `)
+                  .then(() => {
+                    response.status(200).json({"message": `Successfully removed ${song.name} from ${playlist.name}`})
+                  })
+                  .catch(error => {
+                    response.status(404).json({ error });
+                  });
+              });
+        });
 });
 
 app.get('/api/v1/playlists', (request, response) => {

@@ -86,6 +86,30 @@ describe('API Routes', () => {
       });
   });
 
+  it('can return a single song by id', done => {
+
+    database('songs').select(['id', 'name'])
+      .then(songs => {
+        song = songs[songs.length -1];
+      })
+        .then(() => {
+          chai.request(app)
+            .get(`/api/v1/songs/${song.id}`)
+            .end((err, res) => {
+              res.should.have.status(200);
+              res.body.should.be.a('array');
+              expect(res.body.length).to.eq(1);
+              res.body[0].should.have.property('id');
+              res.body[0].should.have.property('name');
+              expect(res.body[0]['name']).to.eq(song.name);
+              res.body[0].should.have.property('artist_name');
+              res.body[0].should.have.property('genre');
+              res.body[0].should.have.property('song_rating');
+              done();
+            });
+        });
+  });
+
   it('can create a new song', done => {
     chai.request(app)
       .post('/api/v1/songs')
@@ -126,6 +150,7 @@ describe('API Routes', () => {
       });
   });
 
+
   it('can post a song to a playlist', done => {
     database('playlists').select(['*'])
       .then(playlists => {
@@ -147,6 +172,28 @@ describe('API Routes', () => {
                   });
               });
         });
+  });
+  it('can delete a song from a playlist', done => {
+    database('songs').select(['id'])
+      .then(songs => {
+        song = songs[songs.length -1];
+      })
+      .then(() => {
+        database('playlists').select(['id'])
+          .then(playlists => {
+            playlist = playlists[playlists.length - 1];
+          })
+          .then(() => {
+            chai.request(app)
+              .delete(`/api/v1/playlists/${playlist.id}/songs/${song.id}`)
+              .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+                expect(res.body['message']).to.eq(`Successfully removed ${song.name} from ${playlist.name}`)
+                done();
+              });
+          });
+      });
   });
 
   it('can return all playlists and their associated songs', done => {
