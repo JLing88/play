@@ -89,6 +89,30 @@ app.delete('/api/v1/songs/:id', (request, response) => {
   });
 });
 
+app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
+  playlist_id = request.params.playlist_id;
+  song_id = request.params.id;
+
+  database.raw(`SELECT * FROM songs WHERE songs.id = ${song_id}`)
+    .then(result => {
+      song = result;
+    }).then(() => {
+      database.raw(`SELECT playlists.name FROM playlists WHERE playlists.id = ${playlist_id}`)
+        .then(result => {
+          playlist = result;
+        })
+      })
+        .then(() => {
+          database.raw
+            (`DELETE FROM playlist_songs
+              WHERE playlist_songs.playlist_id = ${playlist_id} AND playlist_songs.song_id = ${song_id}
+            `)
+            .then(() => {
+              response.status(200).json({"message": `Successfully removed ${song.name} from ${playlist.name}`})
+            });
+        });
+});
+
 app.get('/api/v1/playlists', (request, response) => {
   database.raw
   (`

@@ -1,5 +1,6 @@
 const chai = require('chai');
 const should = chai.should();
+const expect = chai.expect;
 const chaiHttp = require('chai-http');
 const app = require('../src/app');
 
@@ -137,15 +138,16 @@ describe('API Routes', () => {
           })
           .then(() => {
             chai.request(app)
-              .delete(`/api/v1/playlists/${playlist_id}/songs/${song}`)
+              .delete(`/api/v1/playlists/${playlist.id}/songs/${song.id}`)
               .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.a('object');
                 expect(res.body['message']).to.eq(`Successfully removed ${song.name} from ${playlist.name}`)
-              })
-          })
-      })
-  })
+                done();
+              });
+          });
+      });
+  });
 
   it('can return all playlists and their associated songs', done => {
     chai.request(app)
