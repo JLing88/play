@@ -90,26 +90,29 @@ app.delete('/api/v1/songs/:id', (request, response) => {
 });
 
 app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
-  playlist_id = request.params.playlist_id;
-  song_id = request.params.id;
-
-  database.raw(`SELECT * FROM songs WHERE songs.id = ${song_id}`)
-    .then(result => {
-      song = result;
-    }).then(() => {
-      database.raw(`SELECT playlists.name FROM playlists WHERE playlists.id = ${playlist_id}`)
-        .then(result => {
-          playlist = result;
-        })
+  database('songs')
+    .where({id: request.params.id})
+      .then(result => {
+        song = result[0];
       })
         .then(() => {
-          database.raw
-            (`DELETE FROM playlist_songs
-              WHERE playlist_songs.playlist_id = ${playlist_id} AND playlist_songs.song_id = ${song_id}
-            `)
-            .then(() => {
-              response.status(200).json({"message": `Successfully removed ${song.name} from ${playlist.name}`})
-            });
+          database('playlists')
+            .where({id: request.params.playlist_id})
+              .then(result => {
+                playlist = result[0];
+              })
+              .then(() => {
+                database.raw
+                  (`DELETE FROM playlist_songs
+                    WHERE playlist_songs.playlist_id = ${playlist.id} AND playlist_songs.song_id = ${song.id}
+                  `)
+                  .then(() => {
+                    response.status(200).json({"message": `Successfully removed ${song.name} from ${playlist.name}`})
+                  })
+                  .catch(error => {
+                    response.status(404).json({ error });
+                  });
+              });
         });
 });
 
