@@ -132,25 +132,6 @@ describe('API Routes', () => {
       });
   });
 
-  it('can delete a song', done => {
-    var song_id
-    database('songs').select(['id'])
-      .then(songs => {
-        song_id = songs[songs.length -1]['id'];
-      })
-      .then(() => {
-        chai.request(app)
-          .delete(`/api/v1/songs/${song_id}`)
-          .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property('success');
-            done();
-          });
-      });
-  });
-
-
   it('can post a song to a playlist', done => {
     database('playlists').select(['*'])
       .then(playlists => {
@@ -173,6 +154,21 @@ describe('API Routes', () => {
               });
         });
   });
+
+
+  it('can return all playlists and their associated songs', done => {
+    chai.request(app)
+      .get('/api/v1/playlists')
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.be.a('array');
+        res.body[0].should.have.property('id');
+        res.body[0].should.have.property('name');
+        res.body[0].should.have.property('songs');
+        done();
+      });
+  });
+
   it('can delete a song from a playlist', done => {
     database('songs').select(['id'])
       .then(songs => {
@@ -196,16 +192,21 @@ describe('API Routes', () => {
       });
   });
 
-  it('can return all playlists and their associated songs', done => {
-    chai.request(app)
-      .get('/api/v1/playlists')
-      .end((err, res) => {
-        res.should.have.status(200);
-        res.body.should.be.a('array');
-        res.body[0].should.have.property('id');
-        res.body[0].should.have.property('name');
-        res.body[0].should.have.property('songs');
-        done();
+  it('can delete a song', done => {
+    var song_id
+    database('songs').select(['id'])
+      .then(songs => {
+        song_id = songs[songs.length -1]['id'];
+      })
+      .then(() => {
+        chai.request(app)
+          .delete(`/api/v1/songs/${song_id}`)
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('success');
+            done();
+          });
       });
   });
 });
