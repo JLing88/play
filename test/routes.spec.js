@@ -125,6 +125,28 @@ describe('API Routes', () => {
       });
   });
 
+  it('can delete a song from a playlist', done => {
+    database('songs').select(['id'])
+      .then(songs => {
+        song = songs[songs.length -1];
+      })
+      .then(() => {
+        database('playlists').select(['id'])
+          .then(playlists => {
+            playlist = playlists[playlists.length - 1];
+          })
+          .then(() => {
+            chai.request(app)
+              .delete(`/api/v1/playlists/${playlist_id}/songs/${song}`)
+              .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+                expect(res.body['message']).to.eq(`Successfully removed ${song.name} from ${playlist.name}`)
+              })
+          })
+      })
+  })
+
   it('can return all playlists and their associated songs', done => {
     chai.request(app)
       .get('/api/v1/playlists')
