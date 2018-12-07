@@ -108,4 +108,27 @@ describe('API Routes', () => {
   //       eval(pry.it)
   //     }
   // });
+
+  it('can post a song to a playlist', done => {
+    database('playlists').select(['*'])
+      .then(playlists => {
+        var playlist = playlists[playlists.length -1];
+      })
+      .then(() => {
+        database('songs').select(['*'])
+          .then(songs => {
+            var song = songs[songs.length -1];
+          })
+            .then(() => {
+              chai.request(app)
+                .post(`/api/v1/playlists/${playlist.id}/songs/${song.id}`)
+                .end((err, res) => {
+                  res.should.have.status(201);
+                  res.body.should.be.a('object');
+                  expect(res.body['message']).to.equal(`Successfully added ${song.name} to ${playlist.name}`);
+                  done();
+                });
+            });
+      });
+  });
 });

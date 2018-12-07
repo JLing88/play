@@ -128,7 +128,7 @@ app.get('/api/v1/playlists/:id/songs', (request, response) => {
   FROM songs
   INNER JOIN playlist_songs ON songs.id = playlist_songs.song_id
   INNER JOIN playlists ON playlist_songs.song_id = songs.id
-  WHERE playlists.id = ${playlist_id} 
+  WHERE playlists.id = ${playlist_id}
   AND playlists.id = playlist_songs.playlist_id
   GROUP BY playlists.id
   `)
@@ -140,5 +140,20 @@ app.get('/api/v1/playlists/:id/songs', (request, response) => {
   })
 });
 
-module.exports = app;
+app.post('/api/v1/playlists/:playlist_id/songs/:id', (req, res) => {
+  var playlist_id = req.params.playlist_id;
+  var song_id = req.params.id;
+  database.raw
+  (`
+    INSERT INTO playlist_songs (playlist_id, song_id)
+    VALUES (${playlist_id}, ${song_id})
+  `)
+  .then(playlist_song => {
+    res.status(201).json({"message": `Successfully added SONG_NAME to PLAYLIST_NAME`});
+  })
+  .catch(error => {
+    res.status(500).json({ error });
+  });
+})
 
+module.exports = app;
