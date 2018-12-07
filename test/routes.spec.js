@@ -1,5 +1,6 @@
 const chai = require('chai');
 const should = chai.should();
+const expect = chai.expect;
 const chaiHttp = require('chai-http');
 const app = require('../src/app');
 
@@ -86,18 +87,27 @@ describe('API Routes', () => {
   });
 
   it('can return a single song by id', done => {
-    chai.request(app)
-      .get('/api/v1/song/:id')
-      .end((err, res) => {
-        res.should.have.status(200);
-        res.body.should.be.a('array');
-        expect(res.body.length).to.eq(1);
-        res.body[0].should.have.property('id');
-        res.body[0].should.have.property('name');
-        res.body[0].should.have.property('artist_name');
-        res.body[0].should.have.property('genre');
-        res.body[0].should.have.property('song_rating');
-      });
+
+    database('songs').select(['id', 'name'])
+      .then(songs => {
+        song = songs[songs.length -1];
+      })
+        .then(() => {
+          chai.request(app)
+            .get(`/api/v1/songs/${song.id}`)
+            .end((err, res) => {
+              res.should.have.status(200);
+              res.body.should.be.a('array');
+              expect(res.body.length).to.eq(1);
+              res.body[0].should.have.property('id');
+              res.body[0].should.have.property('name');
+              expect(res.body[0]['name']).to.eq(song.name);
+              res.body[0].should.have.property('artist_name');
+              res.body[0].should.have.property('genre');
+              res.body[0].should.have.property('song_rating');
+              done();
+            });
+        });
   });
 
   it('can create a new song', done => {

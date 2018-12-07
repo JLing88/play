@@ -7,7 +7,7 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
 const database = require('knex')(configuration);
 
-pry = require('pryjs')
+const pry = require('pryjs')
 
 app.use(cors()); // Enables CORS for our Frontend
 app.use(bodyParser.json());
@@ -34,15 +34,14 @@ app.get('/api/v1/favorites', (request, response) => {
 });
 
 app.get('/api/v1/songs/:id', (request, response) => {
-  song_id = request.params.id;
-  database('songs').select(['id', "name", "artist_name", "genre", "song_rating"])
-  .where(`songs.id = ${song_id}`)
-    .then(result => {
-      response.status(200).json(result);
-    })
-    .catch(error => {
-      response.status(404).json({ error });
-    });
+  database('songs')
+    .where({ id: request.params.id})
+      .then(result => {
+        response.status(200).json(result);
+      })
+      .catch(error => {
+        response.status(404).json({ error });
+      });
 });
 
 app.post('/api/v1/songs', (request, response) => {
