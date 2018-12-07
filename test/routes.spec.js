@@ -25,8 +25,8 @@ describe('Client Routes', () => {
 
 describe('API Routes', () => {
   function buildTestDb () {
-    database.migrate.latest(configuration);
-    database.seed.run(configuration);
+    database.migrate.latest();
+    database.seed.run();
   };
 
   function tearDown() {
@@ -34,42 +34,12 @@ describe('API Routes', () => {
     database.schema.dropTableIfExists('playlist_songs');
     database.schema.dropTableIfExists('songs');
     database.schema.dropTableIfExists('playlists');
-
+    database.schema.dropTableIfExists('knex_migrations');
+    database.schema.dropTableIfExists('knex_migrations_lock');
   };
 
   before(buildTestDb)
   after(tearDown)
-
-  // before((done) => {
-  //   database.migrate.latest()
-  //     .then( () => done())
-  //     .catch(error => {
-  //       throw error;
-  //       done();
-  //     });
-  // });
-  //
-  // beforeEach((done) => {
-  //   database.migrate.latest()
-  //   .then(() => {
-  //     database.migrate.latest()
-  //   })
-  //     .then(() => {
-  //       return database.seed.run()
-  //     })
-  //       .then( () => done())
-  //         .catch(error => {
-  //           throw error;
-  //           done();
-  //     });
-  // });
-  //
-  // afterEach((done) => {
-  //   database.migrate.rollback()
-  //   .then(() => {
-  //     done();
-  //   });
-  // });
 
   it('can return all favorites', done => {
     chai.request(app)
