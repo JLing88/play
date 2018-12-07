@@ -85,6 +85,21 @@ describe('API Routes', () => {
       });
   });
 
+  it('can return a single song by id', done => {
+    chai.request(app)
+      .get('/api/v1/song/:id')
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.be.a('array');
+        expect(res.body.length).to.eq(1);
+        res.body[0].should.have.property('id');
+        res.body[0].should.have.property('name');
+        res.body[0].should.have.property('artist_name');
+        res.body[0].should.have.property('genre');
+        res.body[0].should.have.property('song_rating');
+      });
+  });
+
   it('can create a new song', done => {
     chai.request(app)
       .post('/api/v1/songs')
