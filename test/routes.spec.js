@@ -25,8 +25,8 @@ describe('Client Routes', () => {
 
 describe('API Routes', () => {
   function buildTestDb () {
-    database.migrate.latest(configuration);
-    database.seed.run(configuration);
+    database.migrate.latest();
+    database.seed.run();
   };
 
   function tearDown() {
@@ -34,42 +34,12 @@ describe('API Routes', () => {
     database.schema.dropTableIfExists('playlist_songs');
     database.schema.dropTableIfExists('songs');
     database.schema.dropTableIfExists('playlists');
-
+    database.schema.dropTableIfExists('knex_migrations');
+    database.schema.dropTableIfExists('knex_migrations_lock');
   };
 
   before(buildTestDb)
   after(tearDown)
-
-  // before((done) => {
-  //   database.migrate.latest()
-  //     .then( () => done())
-  //     .catch(error => {
-  //       throw error;
-  //       done();
-  //     });
-  // });
-  //
-  // beforeEach((done) => {
-  //   database.migrate.latest()
-  //   .then(() => {
-  //     database.migrate.latest()
-  //   })
-  //     .then(() => {
-  //       return database.seed.run()
-  //     })
-  //       .then( () => done())
-  //         .catch(error => {
-  //           throw error;
-  //           done();
-  //     });
-  // });
-  //
-  // afterEach((done) => {
-  //   database.migrate.rollback()
-  //   .then(() => {
-  //     done();
-  //   });
-  // });
 
   it('can return all favorites', done => {
     chai.request(app)
@@ -132,21 +102,40 @@ describe('API Routes', () => {
       });
   });
 
-  it('can delete a song', done => {
-    var song_id
-    database('songs').select(['id'])
-      .then(songs => {
-        song_id = songs[songs.length -1]['id'];
+  it('can post a song to a playlist', done => {
+    database('playlists').select(['*'])
+      .then(playlists => {
+        playlist = playlists[playlists.length - 1];
       })
-      .then(() => {
-        chai.request(app)
-          .delete(`/api/v1/songs/${song_id}`)
-          .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property('success');
-            done();
-          });
+        .then(() => {
+          database('songs').select(['*'])
+            .then(songs => {
+              song = songs[songs.length -1];
+            })
+              .then(() => {
+                chai.request(app)
+                  .post(`/api/v1/playlists/${playlist.id}/songs/${song.id}`)
+                  .end((err, res) => {
+                    res.should.have.status(201);
+                    res.body.should.be.a('object');
+                    expect(res.body['message']).to.equal(`Successfully added ${song.name} to ${playlist.name}`);
+                    done();
+                  });
+              });
+        });
+  });
+
+
+  it('can return all playlists and their associated songs', done => {
+    chai.request(app)
+      .get('/api/v1/playlists')
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.be.a('array');
+        res.body[0].should.have.property('id');
+        res.body[0].should.have.property('name');
+        res.body[0].should.have.property('songs');
+        done();
       });
   });
 
@@ -173,16 +162,21 @@ describe('API Routes', () => {
       });
   });
 
-  it('can return all playlists and their associated songs', done => {
-    chai.request(app)
-      .get('/api/v1/playlists')
-      .end((err, res) => {
-        res.should.have.status(200);
-        res.body.should.be.a('array');
-        res.body[0].should.have.property('id');
-        res.body[0].should.have.property('name');
-        res.body[0].should.have.property('songs');
-        done();
+  it('can delete a song', done => {
+    var song_id
+    database('songs').select(['id'])
+      .then(songs => {
+        song_id = songs[songs.length -1]['id'];
+      })
+      .then(() => {
+        chai.request(app)
+          .delete(`/api/v1/songs/${song_id}`)
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('success');
+            done();
+          });
       });
   });
 });

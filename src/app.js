@@ -178,4 +178,38 @@ app.get('/api/v1/playlists/:id/songs', (request, response) => {
   })
 });
 
+app.post('/api/v1/playlists/:playlist_id/songs/:id', (req, res) => {
+  playlist_id = req.params.playlist_id;
+  song_id = req.params.song_id;
+  database.raw
+    (`
+    SELECT playlist.id, playlist.name
+    FROM playlists
+    WHERE playlists.id = ${playlist_id}`)
+    .then(result => {
+      playlist = result;
+    });
+
+  database.raw
+    (`
+    SELECT song.id, song.name
+    FROM songs
+    WHERE songs.id = ${song_id}
+    `).then(result => {
+      song = result;
+    });
+
+  database.raw
+  (`
+    INSERT INTO playlist_songs (playlist_id, song_id)
+    VALUES (${playlist.id}, ${song.id})
+  `)
+  .then(playlist_song => {
+    res.status(201).json({"message": `Successfully added ${song.name} to ${playlist.name}`});
+  })
+  .catch(error => {
+    res.status(500).json({ error });
+  });
+})
+
 module.exports = app;
