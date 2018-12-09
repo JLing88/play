@@ -7,6 +7,8 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
 const database = require('knex')(configuration);
 
+const Songs = require('../models/songs.js')
+
 const pry = require('pryjs')
 
 app.use(cors()); // Enables CORS for our Frontend
@@ -24,24 +26,23 @@ app.get('/', (request, response) => {
 });
 
 app.get('/api/v1/favorites', (request, response) => {
-  database('songs').select(['id', "name", "artist_name", "genre", "song_rating"])
+  Songs.all()
     .then((favorites) => {
       response.status(200).json(favorites);
     })
     .catch((error) => {
       response.status(500).json({ error });
-    });
+  });
 });
 
 app.get('/api/v1/songs/:id', (request, response) => {
-  database('songs')
-    .where({ id: request.params.id})
-      .then(result => {
-        response.status(200).json(result);
-      })
-      .catch(error => {
-        response.status(404).json({ error });
-      });
+  Songs.getSong(request.params.id) 
+  .then(result => {
+      response.status(200).json(result);
+    })
+    .catch(error => {
+      response.status(404).json({ error });
+    });
 });
 
 app.post('/api/v1/songs', (request, response) => {
@@ -55,13 +56,13 @@ app.post('/api/v1/songs', (request, response) => {
     }
   }
 
-  database('songs').insert(song, ['id', 'name', 'artist_name', 'genre', 'song_rating'])
-  .then(song => {
-    response.status(201).json({ songs: song[0] })
-  })
-  .catch(error => {
-    response.status(500).json({ error });
-  });
+  Songs.postSong(song) 
+    .then(song => {
+      response.status(201).json({ songs: song[0] })
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
 });
 
 app.patch('/api/v1/songs/:id', (request, response) => {
@@ -131,7 +132,7 @@ app.get('/api/v1/playlists', (request, response) => {
   database.raw
   (`
     SELECT playlists.id, playlists.name,
-    coalesce(json_agg(json_build_object('id', songs.id,
+    COALESCE(json_agg(json_build_object('id', songs.id,
                                'name', songs.name,
                                'artist_name', songs.artist_name,
                                'genre', songs.genre,
