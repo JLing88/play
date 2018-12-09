@@ -131,21 +131,21 @@ app.get('/api/v1/playlists', (request, response) => {
   database.raw
   (`
     SELECT playlists.id, playlists.name,
-    json_agg(json_build_object('id', songs.id,
+    coalesce(json_agg(json_build_object('id', songs.id,
                                'name', songs.name,
                                'artist_name', songs.artist_name,
                                'genre', songs.genre,
                                'rating', songs.song_rating))
+                               FILTER (WHERE songs.id IS NOT NULL), '[]')
                                AS songs
-    FROM songs
-    INNER JOIN playlist_songs ON songs.id = playlist_songs.song_id
-    INNER JOIN playlists ON playlist_songs.song_id = songs.id
-    WHERE playlists.id = playlist_songs.playlist_id
+    FROM playlists
+    LEFT JOIN playlist_songs ON playlists.id = playlist_songs.playlist_id
+    LEFT JOIN songs ON playlist_songs.song_id = songs.id
     GROUP BY playlists.id
-    ORDER BY playlists.id ASC
+    ORDER BY playlists.id
   `)
-  .then(songs => {
-    response.status(200).json(songs.rows)
+  .then(playlists => {
+    response.status(200).json(playlists.rows)
   })
   .catch(error => {
     response.status(500).json({ error });
