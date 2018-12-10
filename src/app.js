@@ -7,8 +7,10 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
 const database = require('knex')(configuration);
 
-const Songs = require('../models/songs')
-const PlaylistSongs = require('../models/playlist_songs')
+const Songs = require('../models/songs');
+const PlaylistSongs = require('../models/playlist_songs');
+const Playlists = require('../models/playlists')
+
 
 const pry = require('pryjs')
 
@@ -104,43 +106,24 @@ app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
       song = result[0];
     })
     .then(() => {
-      database('playlists')
-        .where({id: request.params.playlist_id})
-          .then(result => {
-            playlist = result[0];
-          })
-          .then(() => {
-            database.raw
-              (`DELETE FROM playlist_songs
-                WHERE playlist_songs.playlist_id = ${playlist.id} AND playlist_songs.song_id = ${song.id}
-              `)
-              .then(() => {
-                response.status(200).json({"message": `Successfully removed ${song.name} from ${playlist.name}`})
-              })
-              .catch(error => {
-                response.status(404).json({ error });
-              });
-          });
+      Playlists.findPlaylist(request.params.playlist_id)
+        .then(result => {
+          playlist = result[0];
+        })
+        .then(() => {
+          PlaylistSongs.deletePlaylistSong(playlist.id, song.id)
+            .then(() => {
+              response.status(200).json({"message": `Successfully removed ${song.name} from ${playlist.name}`})
+            })
+            .catch(error => {
+              response.status(404).json({ error });
+            });
+        });
     });
 });
 
 app.get('/api/v1/playlists', (request, response) => {
-  database.raw
-  (`
-    SELECT playlists.id, playlists.name,
-    COALESCE(json_agg(json_build_object('id', songs.id,
-                               'name', songs.name,
-                               'artist_name', songs.artist_name,
-                               'genre', songs.genre,
-                               'rating', songs.song_rating))
-                               FILTER (WHERE songs.id IS NOT NULL), '[]')
-                               AS songs
-    FROM playlists
-    LEFT JOIN playlist_songs ON playlists.id = playlist_songs.playlist_id
-    LEFT JOIN songs ON playlist_songs.song_id = songs.id
-    GROUP BY playlists.id
-    ORDER BY playlists.id
-  `)
+  Playlists.all()
   .then(playlists => {
     response.status(200).json(playlists.rows)
   })
@@ -150,57 +133,20 @@ app.get('/api/v1/playlists', (request, response) => {
 });
 
 app.get('/api/v1/playlists/:id/songs', (request, response) => {
-  const playlist_id = request.params.id;
-  database.raw
-  (`
-  SELECT playlists.id, playlists.name,
-  json_agg(json_build_object('id', songs.id,
-                               'name', songs.name,
-                               'artist_name', songs.artist_name,
-                               'genre', songs.genre,
-                               'rating', songs.song_rating))
-                               AS songs
-  FROM songs
-  INNER JOIN playlist_songs ON songs.id = playlist_songs.song_id
-  INNER JOIN playlists ON playlist_songs.song_id = songs.id
-  WHERE playlists.id = ${playlist_id}
-  AND playlists.id = playlist_songs.playlist_id
-  GROUP BY playlists.id
-  `)
-  .then(playlist_songs => {
-    response.status(200).json(playlist_songs.rows);
-  })
-  .catch(error => {
-    response.status(404).json({ error })
-  })
+  Playlists.getPlaylist(request.params.id)
+    .then(playlist_songs => {
+      response.status(200).json(playlist_songs.rows);
+    })
+    .catch(error => {
+      response.status(404).json({ error })
+    })
 });
 
 app.post('/api/v1/playlists/:playlist_id/songs/:id', (req, res) => {
-  playlist_id = req.params.playlist_id;
-  song_id = req.params.song_id;
-  database.raw
-    (`
-    SELECT playlist.id, playlist.name
-    FROM playlists
-    WHERE playlists.id = ${playlist_id}`)
-    .then(result => {
-      playlist = result;
-    });
+  let playlist = Playlists.findPlaylist(req.params.playlist_id)
+  let song = Songs.findSong(req.params.song_id)
 
-  database.raw
-    (`
-    SELECT song.id, song.name
-    FROM songs
-    WHERE songs.id = ${song_id}
-    `).then(result => {
-      song = result;
-    });
-
-  database.raw
-  (`
-    INSERT INTO playlist_songs (playlist_id, song_id)
-    VALUES (${playlist.id}, ${song.id})
-  `)
+  PlaylistSongs.postPlaylist(playlist, song)
   .then(playlist_song => {
     res.status(201).json({"message": `Successfully added ${song.name} to ${playlist.name}`});
   })
