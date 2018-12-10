@@ -12,12 +12,11 @@ const deletePlaylistSong = (playlistId, songId) => database.raw
   `);
 
 
-const postPlaylistSong= (playlistId, songId) => database.raw
+const postPlaylistSong = (playlistId, songId) => database.raw
   (`
     INSERT INTO playlist_songs (playlist_id, song_id)
     VALUES (${playlistId}, ${songId})
   `);
-
 module.exports = {
   deletePlaylistSong,
   postPlaylistSong
