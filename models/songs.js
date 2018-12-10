@@ -12,7 +12,17 @@ const getSong = (songId) => database('songs')
 const postSong = (songAttributes) =>  database('songs')
   .insert(songAttributes, ['id', 'name', 'artist_name', 'genre', 'song_rating']);
 
+const patchSong = (songAttributes, songId) => database('songs')
+  .where({ id: songId})
+  .update(songAttributes, ['id', 'name', 'artist_name', 'genre', 'song_rating']);
+
+const deleteSong = (songId) => database('songs')
+  .where({id: songId})
 
 module.exports = {
-  all, getSong, postSong
+  all,
+  getSong,
+  postSong,
+  patchSong,
+  deleteSong
 }

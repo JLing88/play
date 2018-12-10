@@ -36,7 +36,7 @@ app.get('/api/v1/favorites', (request, response) => {
 });
 
 app.get('/api/v1/songs/:id', (request, response) => {
-  Songs.getSong(request.params.id) 
+  Songs.get(request.params.id) 
   .then(result => {
       response.status(200).json(result);
     })
@@ -56,7 +56,7 @@ app.post('/api/v1/songs', (request, response) => {
     }
   }
 
-  Songs.postSong(song) 
+  Songs.postSong(song)
     .then(song => {
       response.status(201).json({ songs: song[0] })
     })
@@ -68,9 +68,7 @@ app.post('/api/v1/songs', (request, response) => {
 app.patch('/api/v1/songs/:id', (request, response) => {
   const song = request.body;
 
-  database('songs')
-  .where({ id: request.params.id})
-  .update(song, ['id', 'name', 'artist_name', 'genre', 'song_rating'])
+  Songs.patchSong(songAttributes, request.params.id)
   .then(song => {
     response.status(200).json({ songs: song[0] })
   })
@@ -81,8 +79,7 @@ app.patch('/api/v1/songs/:id', (request, response) => {
 
 app.delete('/api/v1/songs/:id', (request, response) => {
 
-  database('songs')
-    .where({id: request.params.id})
+  Songs.deleteSong(request.params.id)
     .then(song => {
       if (song.length) {
         database('songs')
