@@ -16,13 +16,18 @@ const patchSong = (songAttributes, songId) => database('songs')
   .where({ id: songId})
   .update(songAttributes, ['id', 'name', 'artist_name', 'genre', 'song_rating']);
 
-const deleteSong = (songId) => database('songs')
-  .where({id: songId})
+const findSong = (songId) => database('songs')
+  .where({id: songId});
+
+const deleteSong = (songId) =>  database('songs')
+  .where({ id: songId })
+  .del();
 
 module.exports = {
   all,
   getSong,
   postSong,
   patchSong,
+  findSong,
   deleteSong
 }

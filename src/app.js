@@ -7,7 +7,8 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
 const database = require('knex')(configuration);
 
-const Songs = require('../models/songs.js')
+const Songs = require('../models/songs')
+const PlaylistSongs = require('../models/playlist_songs')
 
 const pry = require('pryjs')
 
@@ -79,14 +80,13 @@ app.patch('/api/v1/songs/:id', (request, response) => {
 
 app.delete('/api/v1/songs/:id', (request, response) => {
 
-  Songs.deleteSong(request.params.id)
+  Songs.findSong(request.params.id)
     .then(song => {
       if (song.length) {
-        database('songs')
-          .where({ id: song[0].id })
-            .del().then(song => {
-              response.status(200).json({success: 'Song succesfully deleted'});
-        })
+        Songs.deleteSong(song)
+        .then(song => {
+          response.status(200).json({success: 'Song succesfully deleted'});
+      })
     } else {
       response.status(404).json({
         error: `Could not find song with id ${request.params.id}`
@@ -99,30 +99,29 @@ app.delete('/api/v1/songs/:id', (request, response) => {
 });
 
 app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
-  database('songs')
-    .where({id: request.params.id})
-      .then(result => {
-        song = result[0];
-      })
-        .then(() => {
-          database('playlists')
-            .where({id: request.params.playlist_id})
-              .then(result => {
-                playlist = result[0];
-              })
+  Songs.findSong(request.params.id)
+    .then(result => {
+      song = result[0];
+    })
+    .then(() => {
+      database('playlists')
+        .where({id: request.params.playlist_id})
+          .then(result => {
+            playlist = result[0];
+          })
+          .then(() => {
+            database.raw
+              (`DELETE FROM playlist_songs
+                WHERE playlist_songs.playlist_id = ${playlist.id} AND playlist_songs.song_id = ${song.id}
+              `)
               .then(() => {
-                database.raw
-                  (`DELETE FROM playlist_songs
-                    WHERE playlist_songs.playlist_id = ${playlist.id} AND playlist_songs.song_id = ${song.id}
-                  `)
-                  .then(() => {
-                    response.status(200).json({"message": `Successfully removed ${song.name} from ${playlist.name}`})
-                  })
-                  .catch(error => {
-                    response.status(404).json({ error });
-                  });
+                response.status(200).json({"message": `Successfully removed ${song.name} from ${playlist.name}`})
+              })
+              .catch(error => {
+                response.status(404).json({ error });
               });
-        });
+          });
+    });
 });
 
 app.get('/api/v1/playlists', (request, response) => {
