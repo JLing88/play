@@ -81,7 +81,6 @@ app.patch('/api/v1/songs/:id', (request, response) => {
 });
 
 app.delete('/api/v1/songs/:id', (request, response) => {
-
   Songs.findSong(request.params.id)
     .then(song => {
       if (song.length) {
@@ -134,25 +133,81 @@ app.get('/api/v1/playlists', (request, response) => {
 
 app.get('/api/v1/playlists/:id/songs', (request, response) => {
   Playlists.getPlaylist(request.params.id)
-    .then(playlist_songs => {
-      response.status(200).json(playlist_songs.rows);
-    })
-    .catch(error => {
-      response.status(404).json({ error })
-    })
-});
-
-app.post('/api/v1/playlists/:playlist_id/songs/:id', (req, res) => {
-  let playlist = Playlists.findPlaylist(req.params.playlist_id)
-  let song = Songs.findSong(req.params.song_id)
-
-  PlaylistSongs.postPlaylist(playlist, song)
-  .then(playlist_song => {
-    res.status(201).json({"message": `Successfully added ${song.name} to ${playlist.name}`});
+  .then(playlist_songs => {
+    response.status(200).json(playlist_songs.rows);
   })
   .catch(error => {
-    res.status(500).json({ error });
+    response.status(404).json({ error })
+  })
+});
+
+
+  app.post('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
+    let playlistId = request.params.playlist_id;
+    let songId = request.params.id;
+    let songName;
+    let playlistName;
+
+    Playlists.findPlaylist(playlistId)
+      .then(playlist => {
+        if(playlist.length) {
+          playlistName = playlist[0]['name'];
+        } else {
+          response.status(404).send({ error: `Playlist with ID ${playlistId} does not exist` });
+        }
+      })
+      .then(() => {
+        Songs.findSong(songId)
+          .then(song => {
+            if(song.length) {
+              songName = song[0]['name'];
+            } else {
+              response.status(404).send({ error: `Song with ID ${songId} does not exist` });
+            }
+          })
+      .then(() => {
+        if(songName && playlistName) {
+          PlaylistSongs.postPlaylistSong(playlistId, songId)
+            .then(data => {
+              response.status(201).json({
+                message: `Successfully added ${songName} to ${playlistName}`
+              });
+            });
+        }
+        });
+      });
   });
-})
+
+  // app.post('/api/v1/playlists/:playlist_id/songs/:id', (req, res) => {
+  // database.raw
+  //   (`
+  //   SELECT playlist.id, playlist.name
+  //   FROM playlists
+  //   WHERE playlists.id = ${playlist_id}`)
+  //   .then(result => {
+  //     playlist = result;
+  //   });
+
+  // database.raw
+  //   (`
+  //   SELECT song.id, song.name
+  //   FROM songs
+  //   WHERE songs.id = ${song_id}
+  //   `).then(result => {
+  //     song = result;
+  //   });
+
+  // database.raw
+  // (`
+  //   INSERT INTO playlist_songs (playlist_id, song_id)
+  //   VALUES (${playlist.id}, ${song.id})
+  // `)
+  // .then(playlist_song => {
+  //   res.status(201).json({"message": `Successfully added ${song.name} to ${playlist.name}`});
+  // })
+  // .catch(error => {
+  //   res.status(500).json({ error });
+  // });
+// })
 
 module.exports = app;
