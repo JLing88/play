@@ -39,7 +39,7 @@ app.get('/api/v1/favorites', (request, response) => {
 });
 
 app.get('/api/v1/songs/:id', (request, response) => {
-  Songs.get(request.params.id) 
+  Songs.getSong(request.params.id)
   .then(result => {
       response.status(200).json(result);
     })
@@ -71,7 +71,7 @@ app.post('/api/v1/songs', (request, response) => {
 app.patch('/api/v1/songs/:id', (request, response) => {
   const song = request.body;
 
-  Songs.patchSong(songAttributes, request.params.id)
+  Songs.patchSong(song, request.params.id)
   .then(song => {
     response.status(200).json({ songs: song[0] })
   })
@@ -81,18 +81,18 @@ app.patch('/api/v1/songs/:id', (request, response) => {
 });
 
 app.delete('/api/v1/songs/:id', (request, response) => {
-  Songs.findSong(request.params.id)
+  Songs.getSong(request.params.id)
     .then(song => {
       if (song.length) {
-        Songs.deleteSong(song)
+        Songs.deleteSong(song[0]['id'])
         .then(song => {
           response.status(200).json({success: 'Song succesfully deleted'});
       })
-    } else {
-      response.status(404).json({
-        error: `Could not find song with id ${request.params.id}`
-      });
-    }
+      } else {
+        response.status(404).json({
+          error: `Could not find song with id ${request.params.id}`
+        });
+      }
   })
   .catch(error => {
     response.status(500).json({ error });
