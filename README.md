@@ -43,8 +43,8 @@ The front end application which consumes this data can be see [here](https://dry
 
 ## Technologies Used
 
-[express.js](https://expressjs.com/)
-[node.js](https://nodejs.org/en/)
-[knex.js](https://knexjs.org/)
-[postgreSQL](https://www.postgresql.org/)
+* [express.js](https://expressjs.com/)
+* [node.js](https://nodejs.org/en/)
+* [knex.js](https://knexjs.org/)
+* [postgreSQL](https://www.postgresql.org/)
 
