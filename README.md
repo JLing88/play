@@ -1,7 +1,7 @@
 
 Play is a an API built on express.js which allows a user to store, edit, and destroy their favorite songs. Additionally, it allow for the creation and management of playlists based on favorited songs. This project was built by myself and [Dylan Meskis](https://github.com/dmeskis) over the course of 2 weeks. The most challenging part of this project was learning and implementing Javascript in a short amount of time. 
 
-The front end application which consumes this data can be see [here](https://dry-shelf-31526.herokuapp.com/)
+The front end application which consumes this data can be see [here](https://playfe.herokuapp.com/)
 
 ## Getting the application set up on your machine
 
