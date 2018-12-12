@@ -3,7 +3,7 @@ Play is a an API built in express.js which allows a user to store, edit, and des
 
 ## Getting the application set up on your machine
 
-* Clone the Github respository - `git@github.com:JLing88/play.git`
+* Clone the Github repository - `git@github.com:JLing88/play.git`
 
 * `$ npm install` will retrieve all of the Node depdencies
 
@@ -17,25 +17,21 @@ Play is a an API built in express.js which allows a user to store, edit, and des
 
 ### Favorite Songs
 
-* `GET /api/v1/favorites` returns all favorited (saved) songs
-* `POST /api/v1/songs` saves a songs to the database
-  * required body parameters: `{name, artist_name, genre, song_rating}`
-  
-router.get('/songs/:id', songsController.show);
-router.post('/songs', songsController.post);
-router.patch('/songs/:id', songsController.patch)
-router.delete('/songs/:id', songsController.destroy)
+* `GET /api/v1/favorites` returns all favorited songs
+* `GET /api/v1/songs/:id` returns a specific favorited song
+* `POST /api/v1/songs` creates and saves a song to the database
+  * required body parameters: `{name}`
+  * optional body parameters: `{artist_name, genre, song_rating}`
+* `PATCH /api/v1/songs/:id` updates a specific song
+  * optional body parametes: `{name, artist_name, genre, song_rating}`
+* `DESTROY /api/v1/songs/:id` deletes a specific song
 
-router.delete('/playlists/:playlist_id/songs/:id', playlistSongsController.destroy)
-router.get('/playlists/:id/songs', playlistSongsController.show)
-router.post('/playlists/:playlist_id/songs/:id', playlistSongsController.post)
+### Playlists
 
-router.get('/playlists', playlistsController.index)
+* `GET /api/v1/playlists` returns all playlists and their associated songs
+* `GET /api/v1/playlists/:id/songs` returns a single playlist and its associated songs
+* `POST /api/v1/playlists/:id/songs/:id` creates and saves a song associated with a specific playlist
+* `DELETE /api/v1/playlists/:id/songs/:id` deletes a specific song from a specific playlist
 
-* `GET /api/v1/items/most_revenue?quantity=x` returns the top x items ranked by total revenue generated
-* `GET /api/v1/items/most_items?quantity=x` returns the top x item instances ranked by total number sold
-* `GET /api/v1/items/:id/best_day` returns the date with the most sales for the given item using the invoice date. If there are multiple days with equal number of sales, return the most recent day.
 
-#### Customers
 
-* `GET /api/v1/customers/:id/favorite_merchant` returns a merchant where the customer has conducted the most successful transactions
