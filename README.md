@@ -97,8 +97,6 @@ The front end application which consumes this data can be see [here](https://pla
          ]
       },
       {
-         [
-    {
         "id": 2,
         "name": "Playlist 2",
         "songs": [
