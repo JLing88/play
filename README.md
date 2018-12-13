@@ -37,8 +37,35 @@ The front end application which consumes this data can be see [here](https://pla
 ### Playlists
 
 * `GET /api/v1/playlists` returns all playlists and their associated songs
+```
+[
+    {
+        "id": 1,
+        "name": "Crazy In Love",
+        "artist_name": "Beyonce",
+        "genre": "Contemporary R&B",
+        "song_rating": 88
+    },
+    {
+        "id": 2,
+        "name": "Hot in Here",
+        "artist_name": "Nelly",
+        "genre": "Hip Hop",
+        "song_rating": 7
+    },
+    {
+        "id": 3,
+        "name": "Blurred Lines",
+        "artist_name": "Robin Thicke",
+        "genre": "Disco",
+        "song_rating": 93
+    }
+]
+   ```
+
 * `GET /api/v1/playlists/:id/songs` returns a single playlist and its associated songs
-  ```[
+  ```
+  [
        {
            "id": 2,
            "name": "Playlist 2",
@@ -59,7 +86,8 @@ The front end application which consumes this data can be see [here](https://pla
              }
            ]
         }
-      ]
+      ] 
+   ```
 
 * `POST /api/v1/playlists/:id/songs/:id` creates and saves a song associated with a specific playlist
 * `DELETE /api/v1/playlists/:id/songs/:id` deletes a specific song from a specific playlist
