@@ -26,17 +26,6 @@ The front end application which consumes this data can be see [here](https://pla
 ### Favorite Songs
 
 * `GET /api/v1/favorites` returns all favorited songs
-* `GET /api/v1/songs/:id` returns a specific favorited song
-* `POST /api/v1/songs` creates and saves a song to the database
-  * required body parameters: `{name}`
-  * optional body parameters: `{artist_name, genre, song_rating}`
-* `PATCH /api/v1/songs/:id` updates a specific song
-  * optional body parametes: `{name, artist_name, genre, song_rating}`
-* `DELETE /api/v1/songs/:id` deletes a specific song
-
-### Playlists
-
-* `GET /api/v1/playlists` returns all playlists and their associated songs
 ```
 [
     {
@@ -62,31 +51,88 @@ The front end application which consumes this data can be see [here](https://pla
     }
 ]
    ```
+* `GET /api/v1/songs/:id` returns a specific favorited song
+* `POST /api/v1/songs` creates and saves a song to the database
+  * required body parameters: `{name}`
+  * optional body parameters: `{artist_name, genre, song_rating}`
+* `PATCH /api/v1/songs/:id` updates a specific song
+  * optional body parametes: `{name, artist_name, genre, song_rating}`
+* `DELETE /api/v1/songs/:id` deletes a specific song
+
+### Playlists
+
+* `GET /api/v1/playlists` returns all playlists and their associated songs
+```
+[
+    {
+        "id": 1,
+        "name": "Playlist 1",
+        "songs": [
+            {
+                "id": 1,
+                "name": "Crazy In Love",
+                "artist_name": "Beyonce",
+                "genre": "Contemporary R&B",
+                "rating": 88
+            },
+            {
+                "id": 2,
+                "name": "Hot in Here",
+                "artist_name": "Nelly",
+                "genre": "Hip Hop",
+                "rating": 7
+            }
+         ]
+      },
+      {
+         [
+    {
+        "id": 2,
+        "name": "Playlist 2",
+        "songs": [
+            {
+                "id": 1,
+                "name": "Crazy In Love",
+                "artist_name": "Beyonce",
+                "genre": "Contemporary R&B",
+                "rating": 88
+            },
+            {
+                "id": 2,
+                "name": "Hot in Here",
+                "artist_name": "Nelly",
+                "genre": "Hip Hop",
+                "rating": 7
+            }
+         ]
+      }
+   ]
+```
 
 * `GET /api/v1/playlists/:id/songs` returns a single playlist and its associated songs
   ```
-  [
-       {
-           "id": 2,
-           "name": "Playlist 2",
-           "songs": [
-             {
-               "id": 3,
-               "name": "Blurred Lines",
-               "artist_name": "Robin Thicke",
-               "genre": "Disco",
-               "rating": 93
-             },
-             {
-               "id": 4,
-               "name": "Umbrella",
-               "artist_name": "Rihanna",
-               "genre": "Pop",
-               "rating": 46
-             }
-           ]
+     [
+      {
+        "id": 2,
+        "name": "Playlist 2",
+        "songs": [
+          {
+            "id": 3,
+            "name": "Blurred Lines",
+            "artist_name": "Robin Thicke",
+            "genre": "Disco",
+            "rating": 93
+          },
+          {
+            "id": 4,
+            "name": "Umbrella",
+            "artist_name": "Rihanna",
+            "genre": "Pop",
+            "rating": 46
+          }
+         ]
         }
-      ] 
+       ] 
    ```
 
 * `POST /api/v1/playlists/:id/songs/:id` creates and saves a song associated with a specific playlist
