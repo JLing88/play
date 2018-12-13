@@ -145,8 +145,8 @@ The front end application which consumes this data can be see [here](https://pla
        ] 
    ```
 
-* `POST /api/v1/playlists/:id/songs/:id` creates and saves a song associated with a specific playlist
-* `DELETE /api/v1/playlists/:id/songs/:id` deletes a specific song from a specific playlist
+* `POST /api/v1/playlists/:playlist_id/songs/:id` creates and saves a song associated with a specific playlist
+* `DELETE /api/v1/playlists/:playlist_id/songs/:id` deletes a specific song from a specific playlist
 
 ## Technologies Used
 
