@@ -120,8 +120,8 @@ The front end application which consumes this data can be see [here](https://pla
 ```
 
 * `GET /api/v1/playlists/:id/songs` returns a single playlist and its associated songs
-  ```
-[
+
+``` [
     {
         "id": 1,
         "name": "Playlist 1",
@@ -142,8 +142,8 @@ The front end application which consumes this data can be see [here](https://pla
             }
         ]
     }
-]
-   ```
+] 
+```
 
 * `POST /api/v1/playlists/:playlist_id/songs/:id` creates and saves a song associated with a specific playlist
 * `DELETE /api/v1/playlists/:playlist_id/songs/:id` deletes a specific song from a specific playlist
