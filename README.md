@@ -52,6 +52,18 @@ The front end application which consumes this data can be see [here](https://pla
 ]
    ```
 * `GET /api/v1/songs/:id` returns a specific favorited song
+```
+[
+    {
+        "id": 1,
+        "name": "Crazy In Love",
+        "artist_name": "Beyonce",
+        "genre": "Contemporary R&B",
+        "song_rating": 88
+    }
+]
+```
+
 * `POST /api/v1/songs` creates and saves a song to the database
   * required body parameters: `{name}`
   * optional body parameters: `{artist_name, genre, song_rating}`
