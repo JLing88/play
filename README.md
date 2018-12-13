@@ -32,7 +32,7 @@ The front end application which consumes this data can be see [here](https://pla
   * optional body parameters: `{artist_name, genre, song_rating}`
 * `PATCH /api/v1/songs/:id` updates a specific song
   * optional body parametes: `{name, artist_name, genre, song_rating}`
-* `DESTROY /api/v1/songs/:id` deletes a specific song
+* `DELETE /api/v1/songs/:id` deletes a specific song
 
 ### Playlists
 
