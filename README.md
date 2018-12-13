@@ -121,7 +121,8 @@ The front end application which consumes this data can be see [here](https://pla
 
 * `GET /api/v1/playlists/:id/songs` returns a single playlist and its associated songs
 
-``` [
+``` 
+[
     {
         "id": 1,
         "name": "Playlist 1",
