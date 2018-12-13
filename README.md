@@ -38,6 +38,29 @@ The front end application which consumes this data can be see [here](https://pla
 
 * `GET /api/v1/playlists` returns all playlists and their associated songs
 * `GET /api/v1/playlists/:id/songs` returns a single playlist and its associated songs
+  ```[
+       {
+           "id": 2,
+           "name": "Playlist 2",
+           "songs": [
+             {
+               "id": 3,
+               "name": "Blurred Lines",
+               "artist_name": "Robin Thicke",
+               "genre": "Disco",
+               "rating": 93
+             },
+             {
+               "id": 4,
+               "name": "Umbrella",
+               "artist_name": "Rihanna",
+               "genre": "Pop",
+               "rating": 46
+             }
+           ]
+        }
+      ]```
+
 * `POST /api/v1/playlists/:id/songs/:id` creates and saves a song associated with a specific playlist
 * `DELETE /api/v1/playlists/:id/songs/:id` deletes a specific song from a specific playlist
 
